@@ -22,6 +22,7 @@ class Trainer:
             if ckpt_path:
                 print('Restored model from {}'.format(ckpt_path))
                 self.model.load_weights(ckpt_path)
+                # model加载权重之后需要compile编译，否则无法继续训练
                 self.model.compile(optimizer=keras.optimizers.Adam(lr=0.0001),
                                   loss='binary_crossentropy',
                                   metrics=['acc'])
