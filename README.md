@@ -1,0 +1,4 @@
+- API: tensorflow.keras
+- 数据增强
+- 使用mobilenetV2预训练模型
+- 继续训练（会覆盖之前的模型）
