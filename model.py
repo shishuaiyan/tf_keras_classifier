@@ -26,7 +26,7 @@ class Model:
         # print('pre_trained_model input: ', pre_trained_model.input)
         # print('pre_trained_model output', pre_trained_model.output)
         print(last_output)
-        x = keras.layers.Dropout(0.3)(last_output)
+        x = keras.layers.Dropout(0.5)(last_output)
         x = keras.layers.Dense(1, activation='sigmoid',
                                   kernel_regularizer=keras.regularizers.l1_l2(),
                                   name='output_dense')(x)
