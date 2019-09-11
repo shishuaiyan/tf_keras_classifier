@@ -20,7 +20,8 @@ class GenerateData():
             height_shift_range=0.05,
             shear_range=0.2,
             zoom_range=0.,
-            horizontal_flip=True)
+            horizontal_flip=True,
+            fill_mode='reflect')
         valid_data_gen = keras.preprocessing.image.ImageDataGenerator(rescale=1./255.)
         train_generator = train_data_gen.flow_from_directory(self.train_dir,
                                                              batch_size=self.batch_size,
@@ -47,7 +48,7 @@ def main():
     gd = GenerateData(gl.train_dir, gl.valid_dir, gl.batch_size, gl.img_size)
     train_generator, valid_generator = gd.get_generator()
     print(train_generator.samples)  # 图片个数
-    # gd.show_data_in_gen()
+    gd.show_data_in_gen()
 
 if __name__ == '__main__':
     main()

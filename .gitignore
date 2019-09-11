@@ -2,3 +2,5 @@ output/
 imgs/
 .idea/
 __pycache__/
+temp.py
+logs/

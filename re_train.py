@@ -4,7 +4,7 @@ from tensorflow import keras
 import global_variables as gl
 from model import Model
 from generate_data import GenerateData
-import os
+import os, time
 
 class Trainer:
     def __init__(self):
@@ -18,7 +18,7 @@ class Trainer:
 
     def __load_weights(self):
         if os.path.isdir(self.checkpoint_dir):
-            ckpt_path = tf.train.latest_checkpoint(gl.checkpoint_dir)
+            ckpt_path = tf.train.latest_checkpoint(self.checkpoint_dir)
             if ckpt_path:
                 print('Restored model from {}'.format(ckpt_path))
                 self.model.load_weights(ckpt_path)
@@ -37,8 +37,10 @@ class Trainer:
             self.checkpoint_path,
             save_weights_only=True,
             verbose=1,
-            period=5        # 每5个epoch保存一次
+            period=2        # 每5个epoch保存一次
         )
+
+        tensorboard = keras.callbacks.TensorBoard(log_dir="logs/{}".format(time.time()))
 
         self.model.save_weights(self.checkpoint_path.format(epoch=0))
         history = self.model.fit_generator(
@@ -47,8 +49,9 @@ class Trainer:
             steps_per_epoch=self.train_step_per_epoch,
             epochs=self.epoch,
             validation_steps=self.valid_step_per_epoch,
-            verbose=2,   # verbose=1时只显示loss和acc，为2时加上定义的valid acc
-            callbacks=[save_callback]
+            verbose=2,      # verbose为1时显示各batch的训练误差，以及一个epoch后各batch的valid误差
+                            # 为2时只显示训练一个epoch后各batch的valid误差
+            callbacks=[save_callback, tensorboard]
         )
 
         acc = history.history['acc']

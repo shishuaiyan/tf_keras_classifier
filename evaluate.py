@@ -7,13 +7,15 @@ from model import Model
 import global_variables as gl
 
 class Evaluate:
-    def __init__(self):
+    def __init__(self, checkpoint_dir):
         self.img_size = gl.img_size
+        self.epoch = gl.epoch
+        self.checkpoint_dir = checkpoint_dir
         self.pb_save_base_dir = gl.pb_save_base_dir
 
     def restore_from_ckpt(self, ckpt_name=None):
-        self.model = Model(gl.img_size, gl.epoch).get_model()
-        self.checkpoint_path = os.path.join(gl.checkpoint_dir, ckpt_name) if ckpt_name else tf.train.latest_checkpoint(gl.checkpoint_dir)
+        self.model = Model(self.img_size, self.epoch).get_model()
+        self.checkpoint_path = os.path.join(self.checkpoint_dir, ckpt_name) if ckpt_name else tf.train.latest_checkpoint(gl.checkpoint_dir)
         print('Restored model from {}'.format(self.checkpoint_path))
         self.model.load_weights(self.checkpoint_path)
 
@@ -59,18 +61,27 @@ class Evaluate:
                 print('pb model saved in {}'.format(self.pb_model_path))
                 return self.pb_model_path
 
+def test_model():
+    checkpoint_dir = r'D:\Desktop\shishuai.yan\Desktop\git_code\tf_keras_classifier\output\training_7'
+    evaluate = Evaluate(checkpoint_dir)
+    evaluate.restore_from_ckpt(ckpt_name='model-0042.ckpt')
+    evaluate.freeze2pb()
+    score = evaluate.get_score(r'D:\Desktop\shishuai.yan\Desktop\2.jpg')
+    print(score)
+test_model()
 
-if __name__ == '__main__':
-    evaluate = Evaluate()
-    evaluate.restore_from_ckpt()
-    evaluate.eval_from_generator(gl.valid_dir)
-    # score = evaluate.get_score(r'D:\Desktop\shishuai.yan\Desktop\git_code\tf_keras_classifier\imgs\clear_2\valid\1\0_2_100.jpg')
-    # print(score)        # 分数越低，越清晰
-    # pb_path = evaluate.freeze2pb()
-    # print(pb_path)
-
-    # pb_path = r'D:\Desktop\shishuai.yan\Desktop\git_code\tf_keras_classifier\output\saved_pb_model\1567665978\saved_model.pb'
-    # evaluate.restore_from_pb(pb_path)
-    # score = evaluate.get_score(r'D:\Desktop\shishuai.yan\Desktop\git_code\tf_keras_classifier\imgs\clear_2\valid\1\0_2_100.jpg')
-    # print(score)
+# if __name__ == '__main__':
+#     evaluate = Evaluate(gl.checkpoint_dir)
+#     evaluate.restore_from_ckpt()
+#     # evaluate.eval_from_generator(gl.valid_dir)
+#     # score = evaluate.get_score(r'D:\Desktop\shishuai.yan\Desktop\git_code\tf_keras_classifier\imgs\clear_2\valid\1\0_2_100.jpg')
+#     score = evaluate.get_score(r'D:\Desktop\shishuai.yan\Desktop\0.jpg')
+#     print(score)        # 分数越低，越清晰
+#     # pb_path = evaluate.freeze2pb()
+#     # print(pb_path)
+#
+#     # pb_path = r'D:\Desktop\shishuai.yan\Desktop\git_code\tf_keras_classifier\output\saved_pb_model\1567665978\saved_model.pb'
+#     # evaluate.restore_from_pb(pb_path)
+#     # score = evaluate.get_score(r'D:\Desktop\shishuai.yan\Desktop\git_code\tf_keras_classifier\imgs\clear_2\valid\1\0_2_100.jpg')
+#     # print(score)
 

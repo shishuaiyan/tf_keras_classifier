@@ -6,11 +6,13 @@ class Model:
         self.epoch = epoch
         self.img_size = img_size
         self.model = self.__create_model()
+        # self.model = self.__create_model_cnn()
 
     def __create_model(self):
         MobileNetV2 = keras.applications.mobilenet_v2.MobileNetV2
         pre_trained_model = MobileNetV2(input_shape=(self.img_size,self.img_size,3),
                                         include_top=True,
+                                        # weights=None)
                                         weights='imagenet')
         # 锁住部分层，清晰度分类时效果不好,需要全部放开训练
         # pre_trained_model.summary()
@@ -28,10 +30,31 @@ class Model:
         print(last_output)
         x = keras.layers.Dropout(0.5)(last_output)
         x = keras.layers.Dense(1, activation='sigmoid',
-                                  kernel_regularizer=keras.regularizers.l1_l2(),
+                                  # kernel_regularizer=keras.regularizers.l1_l2(),
                                   name='output_dense')(x)
 
         model = keras.Model(pre_trained_model.input, x)
+
+        model.compile(optimizer=keras.optimizers.Adam(lr=0.0001),
+                      loss='binary_crossentropy',
+                      metrics=['acc'])
+        return model
+
+    def __create_model_cnn(self):
+        model = tf.keras.models.Sequential([
+            tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(self.img_size, self.img_size, 3)),
+            tf.keras.layers.MaxPooling2D(2, 2),
+            tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
+            tf.keras.layers.MaxPooling2D(2,2),
+            tf.keras.layers.Conv2D(128, (3,3), activation='relu'),
+            tf.keras.layers.MaxPooling2D(2,2),
+            tf.keras.layers.Conv2D(128, (3,3), activation='relu'),
+            tf.keras.layers.MaxPooling2D(2,2),
+            tf.keras.layers.Dropout(0.5),
+            tf.keras.layers.Flatten(),
+            tf.keras.layers.Dense(512, activation='relu'),
+            tf.keras.layers.Dense(1, activation='sigmoid')
+        ])
 
         model.compile(optimizer=keras.optimizers.Adam(lr=0.0001),
                       loss='binary_crossentropy',
