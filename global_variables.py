@@ -7,6 +7,7 @@ checkpoint_path = os.path.abspath('./output/training_5/model-{epoch:04d}.ckpt')
 checkpoint_dir = os.path.dirname(checkpoint_path)
 checkpoint_name = None      # 指定使用某一个ckpt的权重，默认为最新的权重文件
 pb_save_base_dir = os.path.abspath('./output/saved_pb_model')
+h5_save_base_dir = os.path.abspath('./output/saved_h5_model')
 
 img_size = 96
 batch_size = 64

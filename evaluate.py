@@ -12,6 +12,7 @@ class Evaluate:
         self.epoch = gl.epoch
         self.checkpoint_dir = checkpoint_dir
         self.pb_save_base_dir = gl.pb_save_base_dir
+        self.h5_save_base_dir = gl.h5_save_base_dir
 
     def restore_from_ckpt(self, ckpt_name=None):
         self.model = Model(self.img_size, self.epoch).get_model()
@@ -50,23 +51,32 @@ class Evaluate:
         score = self.model.predict(image)[0][0]
         return score
 
+    def freeze2h5(self):
+        if not os.path.isdir(self.h5_save_base_dir):
+            os.mkdir(self.h5_save_base_dir)
+        self.h5_model_path = os.path.join(self.h5_save_base_dir, 'saved_model.h5')
+        self.model.save(self.h5_model_path)
+
     def freeze2pb(self):
         import time
+        print(int(time.time()))
         pb_model_dir = os.path.join(self.pb_save_base_dir, str(int(time.time())))
         tf.contrib.saved_model.save_keras_model(self.model, self.pb_save_base_dir)
-        for i in range(5):  # 自动创建的名字和time()有差距，一般是1，故加此判断
+        for i in range(50):  # 自动创建的名字和time()有差距，一般是1，故加此判断
             pb_model_dir = os.path.join(self.pb_save_base_dir, str(int(os.path.basename(pb_model_dir))+i))
             if os.path.isdir(pb_model_dir):
                 self.pb_model_path = os.path.join(pb_model_dir, 'saved_model.pb')
                 print('pb model saved in {}'.format(self.pb_model_path))
                 return self.pb_model_path
 
+
 def test_model():
-    checkpoint_dir = r'D:\Desktop\shishuai.yan\Desktop\git_code\tf_keras_classifier\output\training_7'
+    checkpoint_dir = r'D:\Desktop\shishuai.yan\Desktop\git_code\tf_keras_classifier\output\training_11'
     evaluate = Evaluate(checkpoint_dir)
-    evaluate.restore_from_ckpt(ckpt_name='model-0042.ckpt')
-    evaluate.freeze2pb()
-    score = evaluate.get_score(r'D:\Desktop\shishuai.yan\Desktop\2.jpg')
+    evaluate.restore_from_ckpt(ckpt_name='model-0100.ckpt')
+    # evaluate.freeze2h5()
+    # evaluate.freeze2pb()
+    score = evaluate.get_score(r'D:\Desktop\shishuai.yan\Desktop\0.jpg')
     print(score)
 test_model()
 

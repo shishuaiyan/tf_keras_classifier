@@ -43,6 +43,26 @@ class GenerateData():
         print(batch_image[0], batch_label[0])
         plt.show()
 
+def show_img_size_distribution(train_dir):
+    import cv2
+    import matplotlib.pyplot as plt
+    clear_dir = os.path.join(train_dir, '0')
+    blurry_dir = os.path.join(train_dir, '1')
+    clear_names = os.listdir(clear_dir)
+    blurry_names = os.listdir(blurry_dir)
+    plt.figure()
+    mark_list = ['ro', 'bo']
+    dir_list = [clear_dir, blurry_dir]
+    for i, names in enumerate([clear_names, blurry_names]):
+        for j, name in enumerate(names):
+            img_path = os.path.join(dir_list[i], name)
+            image = cv2.imread(img_path)
+            if len(image.shape) != 3:
+                print(image.shape)
+            size = image.shape[0] * image.shape[1]
+            plt.plot(j, size, mark_list[i])
+        # print(image.size)
+    plt.show()
 
 def main():
     gd = GenerateData(gl.train_dir, gl.valid_dir, gl.batch_size, gl.img_size)
@@ -51,4 +71,5 @@ def main():
     gd.show_data_in_gen()
 
 if __name__ == '__main__':
-    main()
+    # main()
+    show_img_size_distribution(r'D:\Desktop\shishuai.yan\Desktop\git_code\tf_keras_classifier\imgs\clear_2\train')
