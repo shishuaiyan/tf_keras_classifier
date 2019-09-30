@@ -71,10 +71,10 @@ class Evaluate:
 
 
 def test_model():
-    checkpoint_dir = r'D:\Desktop\shishuai.yan\Desktop\git_code\tf_keras_classifier\output\training_11'
+    checkpoint_dir = r'D:\Desktop\shishuai.yan\Desktop\git_code\tf_keras_classifier\output\training_12'
     evaluate = Evaluate(checkpoint_dir)
-    evaluate.restore_from_ckpt(ckpt_name='model-0100.ckpt')
-    # evaluate.freeze2h5()
+    evaluate.restore_from_ckpt(ckpt_name='model-0200.ckpt')
+    evaluate.freeze2h5()
     # evaluate.freeze2pb()
     score = evaluate.get_score(r'D:\Desktop\shishuai.yan\Desktop\0.jpg')
     print(score)
